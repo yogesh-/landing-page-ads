@@ -18,7 +18,7 @@ export function WhatsAppCTA({ projectName }: { projectName?: string }) {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp"
       onClick={() => track('whatsapp_click', { project: projectName })}
-      className="fixed bottom-4 right-4 z-40 rounded-full bg-[#25D366] px-4 py-3 text-sm font-semibold text-white shadow-lg">
+      className="fixed bottom-20 right-4 lg:bottom-4 z-40 rounded-full bg-[#25D366] px-4 py-3 text-sm font-semibold text-white shadow-lg">
       WhatsApp
     </a>
   )

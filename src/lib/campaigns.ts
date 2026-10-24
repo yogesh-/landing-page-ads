@@ -8,20 +8,20 @@ export interface CampaignContent {
 
 const base: CampaignContent = {
   eyebrow: 'DUBAI OFF-PLAN PROPERTY',
-  headline: 'Discover Your Next Property in Dubai',
-  subline: "Explore new apartments, villas and townhouses across Dubai's residential communities.",
-  cta: 'Get a Personalised Shortlist',
+  headline: 'Find Your Next Home or Investment in Dubai',
+  subline: 'Tell us your budget and preferred property type. We’ll send a personalised shortlist of new off-plan apartments, townhouses and villas.',
+  cta: 'Get My Shortlist',
 }
 
 export const campaigns: Record<string, CampaignContent> = {
   default: base,
   gulf: {
     ...base,
-    subline: 'Compare Dubai communities, property types and developer payment plans with a local advisor.',
+    subline: 'Compare Dubai communities and developer payment plans with a local advisor, and get a shortlist that fits your budget.',
   },
   international: {
     ...base,
-    subline: 'Understand the off-plan buying process from overseas, compare projects and book a remote consultation.',
+    subline: 'Buying from overseas? Get a shortlist matched to your budget and a remote consultation with a Dubai-based advisor.',
   },
 }
 

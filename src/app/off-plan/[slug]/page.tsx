@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { SiteHeader, SiteFooter } from '@/components/Shell'
+import { SiteHeader, SiteFooter, MobileCta } from '@/components/Shell'
 import { Breadcrumbs, FAQ, generalFaq } from '@/components/Sections'
 import { PageTracker, WhatsAppCTA } from '@/components/Client'
 import LeadForm from '@/components/LeadForm'
@@ -35,14 +35,13 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       <Breadcrumbs items={[{ name: 'Off-plan', href: '/off-plan' }, { name: p.projectName }]} />
       <main>
         <section className="bg-[#151515] text-white">
-          <div className="mx-auto max-w-6xl px-4 py-16">
-            <p className="text-sm text-[#F47721]">{[p.developerName, p.location].filter(Boolean).join(' · ')}</p>
-            <h1 className="mt-2 text-4xl font-semibold sm:text-5xl">{p.projectName}</h1>
-            {p.shortDescription && <p className="mt-4 max-w-2xl text-lg text-white/80">{p.shortDescription}</p>}
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a href="#enquire" className="rounded-lg bg-[#F47721] px-6 py-3.5 font-semibold">Request Project Details</a>
-              <a href="#enquire" className="rounded-lg border border-white/60 px-6 py-3.5 font-semibold">Speak to an Advisor</a>
+          <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-8 px-4 py-10 sm:py-16 lg:grid-cols-[1.1fr_0.9fr] [&>*]:min-w-0">
+            <div>
+              <p className="text-sm text-[#F47721]">{[p.developerName, p.location].filter(Boolean).join(' · ')}</p>
+              <h1 className="mt-2 text-3xl font-semibold sm:text-5xl">{p.projectName}</h1>
+              {p.shortDescription && <p className="mt-4 max-w-xl text-base text-white/80 sm:text-lg">{p.shortDescription}</p>}
             </div>
+            <LeadForm projectSlug={p.slug} projectName={p.projectName} title={`Get details for ${p.projectName}`} cta="Request Project Details" />
           </div>
         </section>
         {facts.length > 0 && (
@@ -63,13 +62,11 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           <section className="mx-auto max-w-6xl px-4 pt-14"><h2 className="text-2xl font-semibold">Location</h2>
             <ul className="mt-4 space-y-1 text-[#6B7280]">{p.nearbyLandmarks.map((l) => <li key={l.name}>{l.name} — {l.distance}</li>)}</ul></section>
         ) : null}
-        <div className="mx-auto max-w-3xl px-4 pt-14">
-          <LeadForm projectSlug={p.slug} projectName={p.projectName} title={`Get details for ${p.projectName}`} cta="Request Project Details" />
-        </div>
         <FAQ items={generalFaq.slice(0, 4)} />
         <p className="mx-auto max-w-3xl px-4 pt-8 text-xs text-[#6B7280]">Infinity Realty is a real estate brokerage and is not the developer of {p.projectName}.</p>
       </main>
       <SiteFooter />
+      <MobileCta />
       <WhatsAppCTA projectName={p.projectName} />
     </>
   )

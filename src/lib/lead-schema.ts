@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { budgetBands, timelines, propertyTypeOptions, countryCodes } from './config'
+import { budgetBands, propertyTypeOptions, countryCodes } from './config'
 
 const safe = z.string().max(200).regex(/^[\w\-.:@/ %+=&,()]*$/, 'invalid').optional()
 
@@ -23,9 +23,6 @@ export const leadSchema = z.object({
     message: 'Please choose a property type',
   }),
   budgetBand: z.enum(budgetBands.map((b) => b.value) as [string, ...string[]], { message: 'Please choose a budget' }),
-  purchaseTimeline: z.enum(timelines.map((t) => t.value) as [string, ...string[]], {
-    message: 'Please choose a timeline',
-  }),
   projectSlug: z.string().max(100).optional(),
   consentMarketing: z.boolean().default(false),
   consentTextVersion: z.string().max(40).optional(),

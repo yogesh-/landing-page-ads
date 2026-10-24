@@ -20,11 +20,9 @@ export const CONSENT_TEXT_VERSION = 'v1'
 export const PRIVACY_POLICY_VERSION = env(process.env.NEXT_PUBLIC_PRIVACY_VERSION) ?? 'unversioned'
 
 export const budgetBands = [
-  { value: 'below-1m', label: 'Below AED 1 million', min: undefined, max: 1_000_000 },
-  { value: '1m-3m', label: 'AED 1 million – 3 million', min: 1_000_000, max: 3_000_000 },
-  { value: '3m-6m', label: 'AED 3 million – 6 million', min: 3_000_000, max: 6_000_000 },
-  { value: 'above-6m', label: 'Above AED 6 million', min: 6_000_000, max: undefined },
-  { value: 'undecided', label: 'Undecided', min: undefined, max: undefined },
+  { value: '1m-3m', label: 'AED 1 Million – 3 Million', min: 1_000_000, max: 3_000_000 },
+  { value: '3m-7m', label: 'AED 3 Million – 7 Million', min: 3_000_000, max: 7_000_000 },
+  { value: 'above-7m', label: 'Above AED 7 Million', min: 7_000_000, max: undefined },
 ] as const
 
 export const timelines = [
@@ -36,9 +34,8 @@ export const timelines = [
 
 export const propertyTypeOptions = [
   { value: 'apartment', label: 'Apartment' },
-  { value: 'villa', label: 'Villa' },
   { value: 'townhouse', label: 'Townhouse' },
-  { value: 'open', label: 'Open to recommendations' },
+  { value: 'villa', label: 'Villas' },
 ] as const
 
 export const countryCodes = [

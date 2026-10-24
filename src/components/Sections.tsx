@@ -1,20 +1,26 @@
 import Link from 'next/link'
+import Image from 'next/image'
+import { Skyline } from './Art'
 import { CategoryTrack } from './Client'
 import { type Project, formatPrice } from '@/lib/projects'
 import type { CampaignContent } from '@/lib/campaigns'
 
-export function Hero({ c, title, sub }: { c: CampaignContent; title?: string; sub?: string }) {
+export function Hero({ c, title, sub, image, children }: { c: CampaignContent; title?: string; sub?: string; image?: string; children?: React.ReactNode }) {
   return (
-    <section className="bg-[#151515] text-white">
-      <div className="mx-auto max-w-6xl px-4 py-16 sm:py-24">
-        {c.eyebrow && !title && <p className="text-xs tracking-[0.2em] text-[#F47721]">{c.eyebrow}</p>}
-        <h1 className="mt-3 max-w-3xl text-4xl font-semibold leading-tight sm:text-5xl">{title ?? c.headline}</h1>
-        <p className="mt-4 max-w-2xl text-lg text-white/80">{sub ?? c.subline}</p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <a href="#projects" className="rounded-lg bg-[#F47721] px-6 py-3.5 font-semibold text-white">Explore Projects</a>
-          <a href="#enquire" className="rounded-lg border border-white/60 px-6 py-3.5 font-semibold">{c.cta}</a>
+    <section className="relative isolate overflow-hidden bg-[#151515] text-white">
+      {!image && <Skyline className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 w-full sm:h-56" />}
+      {image && <Image src={image} alt="Dubai residential skyline" fill priority sizes="100vw" className="-z-10 object-cover opacity-45" />}
+      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-8 px-4 py-10 sm:py-16 lg:grid-cols-[1.1fr_0.9fr] [&>*]:min-w-0">
+        <div>
+          {c.eyebrow && !title && <p className="text-xs tracking-[0.2em] text-[#F47721]">{c.eyebrow}</p>}
+          <h1 className="mt-3 text-3xl font-semibold leading-tight sm:text-5xl">{title ?? c.headline}</h1>
+          <p className="mt-3 max-w-xl text-base text-white/85 sm:text-lg">{sub ?? c.subline}</p>
+          <div className="mt-6 hidden flex-wrap gap-3 lg:flex">
+            <a href="#projects" className="rounded-lg border border-white/60 px-5 py-3 text-sm font-semibold">Explore Projects</a>
+          </div>
+          <p className="mt-4 hidden text-sm text-white/60 sm:block">Compare verified project details, starting prices and payment plans.</p>
         </div>
-        <p className="mt-5 text-sm text-white/60">Compare verified project details, starting prices and payment plans.</p>
+        {children}
       </div>
     </section>
   )
@@ -26,16 +32,17 @@ const cats = [
   { href: '/off-plan/townhouses', name: 'Townhouses', copy: 'Compare townhouse communities, layouts and project details.' },
 ]
 
-export function CategoryCards() {
+export function CategoryCards({ images = {} }: { images?: Record<string, string | undefined> }) {
   return (
     <section className="mx-auto max-w-6xl px-4 pt-14">
       <h2 className="text-2xl font-semibold">Browse by property type</h2>
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         {cats.map((c) => (
-          <CategoryTrack key={c.href} category={c.name.toLowerCase()} href={c.href} className="rounded-2xl bg-[#F7F6F3] p-6 ring-1 ring-[#E5E5E5] hover:ring-[#F47721]">
-            <h3 className="text-xl font-semibold">{c.name}</h3>
+          <CategoryTrack key={c.href} category={c.name.toLowerCase()} href={c.href} className="overflow-hidden rounded-2xl bg-[#F7F6F3] ring-1 ring-[#E5E5E5] hover:ring-[#F47721]">
+            {images[c.name.toLowerCase()] && <Image src={images[c.name.toLowerCase()]!} alt={`${c.name} in Dubai`} width={800} height={500} sizes="(min-width:640px) 33vw, 100vw" className="aspect-[16/10] w-full object-cover" />}
+            <div className="p-5"><h3 className="text-xl font-semibold">{c.name}</h3>
             <p className="mt-2 text-sm text-[#6B7280]">{c.copy}</p>
-            <span className="mt-4 inline-block text-sm font-medium text-[#F47721]">Explore {c.name.toLowerCase()} →</span>
+            <span className="mt-4 inline-block text-sm font-medium text-[#F47721]">Explore {c.name.toLowerCase()} →</span></div>
           </CategoryTrack>
         ))}
       </div>
@@ -60,6 +67,9 @@ export function ProjectCard({ p }: { p: Project }) {
 }
 
 export function ProjectGrid({ list, emptyText }: { list: Project[]; emptyText: string }) {
+  const shown = list.filter((p) => p.startingPrice || p.paymentPlan || p.completionDate || p.location)
+  if (!shown.length) return emptyText ? null : null
+  list = shown
   return (
     <section id="projects" className="mx-auto max-w-6xl scroll-mt-4 px-4 pt-14">
       <h2 className="text-2xl font-semibold">Featured developments</h2>
@@ -98,7 +108,7 @@ export const generalFaq = [
 ]
 
 export function HowItWorks() {
-  const steps = ["Tell us what you're looking for.", 'Compare suitable projects.', 'Speak with a Dubai property advisor.']
+  const steps = ['Tell us your budget and preferred property type.', 'We shortlist projects that match.', 'An advisor contacts you to talk it through.']
   return (
     <section className="mx-auto max-w-6xl px-4 pt-14">
       <h2 className="text-2xl font-semibold">How it works</h2>
@@ -114,5 +124,33 @@ export function Breadcrumbs({ items }: { items: { name: string; href?: string }[
     <nav aria-label="Breadcrumb" className="mx-auto max-w-6xl px-4 pt-4 text-sm text-[#6B7280]">
       {items.map((i, n) => <span key={i.name}>{i.href ? <Link href={i.href} className="underline">{i.name}</Link> : i.name}{n < items.length - 1 && ' / '}</span>)}
     </nav>
+  )
+}
+
+export function Benefits() {
+  const items = [
+    { t: 'A shortlist matched to you', d: 'Tell us your budget and property type. We shortlist projects that fit, instead of sending you a long catalogue.' },
+    { t: 'Clear payment-plan comparisons', d: 'See how booking amounts, instalments and handover payments compare across developers, side by side.' },
+    { t: 'Advice from a Dubai-based team', d: 'Speak with an advisor by call or WhatsApp, from wherever you are, at a time that suits you.' },
+  ]
+  return (
+    <section className="mx-auto max-w-6xl px-4 pt-12 sm:pt-16">
+      <h2 className="text-2xl font-semibold sm:text-3xl">Why buyers start here</h2>
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        {items.map((i) => <div key={i.t} className="rounded-2xl bg-[#F7F6F3] p-6"><h3 className="font-semibold">{i.t}</h3><p className="mt-2 text-sm text-[#6B7280]">{i.d}</p></div>)}
+      </div>
+    </section>
+  )
+}
+
+export function FinalCta() {
+  return (
+    <section className="mx-auto mt-12 max-w-6xl px-4 sm:mt-16">
+      <div className="rounded-2xl bg-[#151515] p-8 text-center text-white sm:p-12">
+        <h2 className="text-2xl font-semibold sm:text-3xl">Ready to see options that fit?</h2>
+        <p className="mx-auto mt-2 max-w-xl text-white/75">Share your name, number and budget. An advisor will get back to you with a personalised shortlist.</p>
+        <a href="#enquire" className="mt-6 inline-block rounded-lg bg-[#F47721] px-7 py-3.5 font-semibold">Get My Shortlist</a>
+      </div>
+    </section>
   )
 }

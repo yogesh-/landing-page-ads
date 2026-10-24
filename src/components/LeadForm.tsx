@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
-import { budgetBands, timelines, propertyTypeOptions, countryCodes, site, CONSENT_TEXT_VERSION, PRIVACY_POLICY_VERSION, whatsappLink } from '@/lib/config'
+import { budgetBands, propertyTypeOptions, countryCodes, site, whatsappLink } from '@/lib/config'
 import { leadSchema } from '@/lib/lead-schema'
 import { readAttribution } from '@/lib/attribution'
 import { track } from '@/lib/analytics'
@@ -9,7 +9,7 @@ interface Props { id?: string; defaultType?: string; projectSlug?: string; proje
 
 const field = 'w-full rounded-lg border border-[#E5E5E5] bg-white px-3.5 py-3 text-base text-[#151515] focus:border-[#F47721] focus:outline-none focus:ring-2 focus:ring-[#F47721]/30'
 
-export default function LeadForm({ id = 'enquire', defaultType, projectSlug, projectName, campaignGroup, title = 'Find Properties That Match Your Requirements', cta = 'Get My Property Shortlist' }: Props) {
+export default function LeadForm({ id = 'enquire', defaultType, projectSlug, projectName, campaignGroup, title = 'Get Your Property Shortlist', cta = 'Get My Shortlist' }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
   const [serverError, setServerError] = useState('')
@@ -27,9 +27,7 @@ export default function LeadForm({ id = 'enquire', defaultType, projectSlug, pro
       fullName: String(fd.get('fullName') ?? ''), email: String(fd.get('email') ?? ''),
       countryCode: String(fd.get('countryCode') ?? '+971'), phone: String(fd.get('phone') ?? ''),
       propertyType: String(fd.get('propertyType') ?? ''), budgetBand: String(fd.get('budgetBand') ?? ''),
-      purchaseTimeline: String(fd.get('purchaseTimeline') ?? ''), projectSlug,
-      consentMarketing: fd.get('consentMarketing') === 'on',
-      consentTextVersion: CONSENT_TEXT_VERSION, privacyPolicyVersion: PRIVACY_POLICY_VERSION,
+      projectSlug,
       website: String(fd.get('website') ?? ''), idempotencyKey: key.current, campaignGroup,
       attribution: readAttribution(),
     }
@@ -75,31 +73,25 @@ export default function LeadForm({ id = 'enquire', defaultType, projectSlug, pro
   const a11y = (k: string) => ({ id: `${id}-${k}`, name: k, 'aria-invalid': !!errors[k], 'aria-describedby': errors[k] ? `${id}-${k}-err` : undefined })
 
   return (
-    <section id={id} className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-[#E5E5E5] sm:p-8">
-      <h2 className="text-2xl font-semibold text-[#151515]">{title}</h2>
-      <p className="mt-2 text-[#6B7280]">Share your preferences and our team can help you explore relevant options.</p>
-      <form onSubmit={onSubmit} onFocus={onStart} noValidate className="mt-6 grid gap-4 sm:grid-cols-2">
+    <section id={id} className="scroll-mt-4 rounded-2xl bg-white p-5 text-[#151515] shadow-sm ring-1 ring-[#E5E5E5] sm:p-7">
+      <h2 className="text-xl font-semibold text-[#151515] sm:text-2xl">{title}</h2>
+      
+      <form onSubmit={onSubmit} onFocus={onStart} noValidate className="mt-4 grid grid-cols-1 gap-3.5 sm:grid-cols-2 [&>*]:min-w-0">
         <div className="sm:col-span-2"><label htmlFor={`${id}-fullName`} className="mb-1 block text-sm font-medium">Full name</label><input {...a11y('fullName')} autoComplete="name" className={field} />{err('fullName')}</div>
         <div className="sm:col-span-2"><label htmlFor={`${id}-email`} className="mb-1 block text-sm font-medium">Email address</label><input {...a11y('email')} type="email" autoComplete="email" inputMode="email" className={field} />{err('email')}</div>
         <div className="sm:col-span-2">
           <label htmlFor={`${id}-phone`} className="mb-1 block text-sm font-medium">Phone number</label>
           <div className="flex gap-2">
-            <select name="countryCode" aria-label="Country calling code" defaultValue="+971" className={`${field} w-36 shrink-0`}>{countryCodes.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}</select>
-            <input {...a11y('phone')} type="tel" autoComplete="tel-national" inputMode="tel" className={field} />
+            <select name="countryCode" aria-label="Country calling code" defaultValue="+971" className={`${field} !w-[7.5rem] shrink-0`}>{countryCodes.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}</select>
+            <input {...a11y('phone')} type="tel" autoComplete="tel-national" inputMode="tel" className={`${field} !w-auto min-w-0 flex-1`} />
           </div>{err('phone')}
         </div>
-        <div><label htmlFor={`${id}-propertyType`} className="mb-1 block text-sm font-medium">Preferred property type</label>
+        <div><label htmlFor={`${id}-propertyType`} className="mb-1 block text-sm font-medium">Preferred choice</label>
           <select {...a11y('propertyType')} defaultValue={defaultType ?? ''} className={field}><option value="" disabled>Select…</option>{propertyTypeOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select>{err('propertyType')}</div>
-        <div><label htmlFor={`${id}-budgetBand`} className="mb-1 block text-sm font-medium">Approximate budget</label>
+        <div><label htmlFor={`${id}-budgetBand`} className="mb-1 block text-sm font-medium">Investment range</label>
           <select {...a11y('budgetBand')} defaultValue="" className={field}><option value="" disabled>Select…</option>{budgetBands.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}</select>{err('budgetBand')}</div>
-        <div className="sm:col-span-2"><label htmlFor={`${id}-purchaseTimeline`} className="mb-1 block text-sm font-medium">Purchase timeline</label>
-          <select {...a11y('purchaseTimeline')} defaultValue="" className={field}><option value="" disabled>Select…</option>{timelines.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}</select>{err('purchaseTimeline')}</div>
         {/* honeypot */}
         <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden"><label>Website<input name="website" tabIndex={-1} autoComplete="off" /></label></div>
-        <label className="flex items-start gap-3 text-sm text-[#6B7280] sm:col-span-2">
-          <input type="checkbox" name="consentMarketing" className="mt-1 h-4 w-4 accent-[#F47721]" />
-          <span>I agree to receive follow-up property updates from Infinity Realty (optional).</span>
-        </label>
         <p className="text-xs text-[#6B7280] sm:col-span-2">
           We use your details to respond to this enquiry. {site.privacyUrl ? <>See our <a className="underline" href={site.privacyUrl}>privacy policy</a>.</> : null}
         </p>

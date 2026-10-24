@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { leadSchema } from '@/lib/lead-schema'
-import { budgetBands, timelines, propertyTypeOptions } from '@/lib/config'
+import { budgetBands, propertyTypeOptions } from '@/lib/config'
 import { getProject } from '@/lib/projects'
 
 export const maxDuration = 30
@@ -58,10 +58,8 @@ export async function POST(req: Request) {
   const notes = [
     `Landing page: ${last.landing_path ?? first.landing_path ?? '—'}`,
     `Campaign group: ${d.campaignGroup ?? '—'}`,
-    `Budget: ${label(budgetBands, d.budgetBand)}`,
-    `Timeline: ${label(timelines, d.purchaseTimeline)}`,
+    `Investment range: ${label(budgetBands, d.budgetBand)}`,
     `Property type: ${label(propertyTypeOptions, d.propertyType)}`,
-    `Marketing consent: ${d.consentMarketing ? 'yes' : 'no'} (${d.consentTextVersion ?? '-'} / policy ${d.privacyPolicyVersion ?? '-'}) @ ${new Date().toISOString()}`,
     `First touch: ${fmt(first as Record<string, string | undefined>)}`,
     `Latest paid touch: ${fmt(last as Record<string, string | undefined>)}`,
   ].join('\n')
